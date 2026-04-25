@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matches & Events — Chelsea Supporters Club Vancouver</title>
+<meta name="description" content="All Chelsea watch parties at The Brass Fish, Vancouver. Fixtures in Pacific Time.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/styles.css">
+<style>
+/* ── MATCHES PAGE ─────────────────────────────────────────── */
+
+.fixture-table { display: flex; flex-direction: column; gap: 8px; }
+
+.fixture-card {
+  display: grid;
+  grid-template-columns: 72px 1px 1fr;
+  gap: 0; align-items: stretch;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 10px; overflow: hidden;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+.fixture-card:hover { border-color: var(--blue); box-shadow: 0 4px 20px rgba(3,70,148,0.08); }
+.fixture-card--next { border-color: var(--gold); background: #fffdf5; }
+.fixture-card--next:hover { border-color: var(--gold); box-shadow: 0 4px 20px rgba(219,161,17,0.12); }
+
+.fixture-card__date {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 20px 0;
+  background: var(--off-white);
+  border-right: 1.5px solid var(--border);
+}
+.fixture-card--next .fixture-card__date { background: rgba(219,161,17,0.08); border-right-color: rgba(219,161,17,0.2); }
+.fixture-card__day { font-family: 'Archivo', sans-serif; font-size: 32px; font-weight: 900; color: var(--text); line-height: 1; }
+.fixture-card__month { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 1px; }
+.fixture-card__weekday { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+.fixture-card__sep { width: 1px; background: var(--border); }
+
+.fixture-card__body {
+  padding: 16px 20px; display: flex; flex-direction: column; justify-content: center; gap: 4px;
+}
+.fixture-card__comp {
+  display: flex; align-items: center; gap: 8px;
+}
+.fixture-card__comp-name { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); }
+.fixture-card__teams { font-family: 'Archivo', sans-serif; font-size: 20px; font-weight: 800; color: var(--text); line-height: 1.2; }
+.fixture-card__meta { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.fixture-card__meta-sep { color: var(--border); }
+
+/* Pub partner block */
+.pub-hero {
+  background: var(--blue-dark);
+  border-radius: 14px;
+  padding: 32px 36px;
+  display: flex; gap: 28px; align-items: center; flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+.pub-hero__img {
+  width: 80px; height: 80px; border-radius: 12px;
+  background: rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 38px; flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+.pub-hero__body { flex: 1; }
+.pub-hero__name { font-family: 'Archivo', sans-serif; font-size: 24px; font-weight: 900; color: var(--white); }
+.pub-hero__tag { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+.pub-hero__detail { font-size: 14px; color: rgba(255,255,255,0.55); margin-top: 6px; line-height: 1.65; max-width: 560px; }
+
+@media (max-width: 768px) {
+  .fixture-card { grid-template-columns: 60px 1px 1fr; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="shared/components.jsx"></script>
+
+<script type="text/babel">
+const FIXTURES = [
+  {
+    id: 1,
+    date: '26', month: 'Apr', weekday: 'Sun',
+    comp: 'FA Cup Semi-Final',
+    home: 'Chelsea', away: 'Leeds United',
+    venue: 'Wembley Stadium',
+    kickoff_pt: '7:00 AM PDT', kickoff_uk: '3:00 PM BST',
+    next: true,
+  },
+  {
+    id: 2,
+    date: '4', month: 'May', weekday: 'Mon',
+    comp: 'Premier League',
+    home: 'Chelsea', away: 'Nottm Forest',
+    venue: 'Stamford Bridge',
+    kickoff_pt: '6:00 AM PDT', kickoff_uk: '2:00 PM BST',
+  },
+  {
+    id: 3,
+    date: '9', month: 'May', weekday: 'Sat',
+    comp: 'Premier League',
+    home: 'Liverpool', away: 'Chelsea',
+    venue: 'Anfield',
+    kickoff_pt: '4:30 AM PDT', kickoff_uk: '12:30 PM BST',
+  },
+  {
+    id: 4,
+    date: '17', month: 'May', weekday: 'Sun',
+    comp: 'Premier League',
+    home: 'Chelsea', away: 'Tottenham',
+    venue: 'Stamford Bridge',
+    kickoff_pt: '7:00 AM PDT', kickoff_uk: '3:00 PM BST',
+  },
+  {
+    id: 5,
+    date: 'TBC', month: 'May', weekday: 'TBC',
+    comp: 'Premier League',
+    home: 'Sunderland', away: 'Chelsea',
+    venue: 'Stadium of Light',
+    kickoff_pt: 'TBC', kickoff_uk: 'TBC',
+  },
+];
+
+function FixtureCard({ f }) {
+  return (
+    <div className={`fixture-card${f.next ? ' fixture-card--next' : ''}`}>
+      {/* Date */}
+      <div className="fixture-card__date">
+        <div className="fixture-card__day">{f.date}</div>
+        <div className="fixture-card__month">{f.month}</div>
+        <div className="fixture-card__weekday">{f.weekday}</div>
+      </div>
+
+      <div className="fixture-card__sep"></div>
+
+      {/* Body */}
+      <div className="fixture-card__body">
+        <div className="fixture-card__comp">
+          <span className="fixture-card__comp-name">{f.comp}</span>
+          {f.next && <span className="badge badge-blue" style={{marginLeft:4}}>Next Up</span>}
+        </div>
+        <div className="fixture-card__teams">{f.home} vs {f.away}</div>
+        <div className="fixture-card__meta">
+          <span>{f.kickoff_pt}</span>
+          <span className="fixture-card__meta-sep">·</span>
+          <span>{f.kickoff_uk} UK</span>
+          <span className="fixture-card__meta-sep">·</span>
+          <span>{f.venue}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MatchesPage() {
+  return (
+    <div>
+      <Nav cartCount={0} />
+
+      <PageHeader
+        label="2025–26 Season"
+        title="Matches & Events"
+        sub="All watch parties at The Brass Fish · Kickoff times in Pacific Time"
+        img="uploads/Screen_Shot_2022-08-02_at_2.30.52_PM.png"
+      />
+
+      <div className="bg-white">
+        <div className="section">
+
+          {/* Pub partner hero block */}
+          <div className="pub-hero">
+            <div className="pub-hero__img"></div>
+            <div className="pub-hero__body">
+              <div className="pub-hero__tag">Official Watch Party Venue</div>
+              <div className="pub-hero__name">The Brass Fish</div>
+              <div className="pub-hero__detail">
+                Vancouver's home for every Chelsea match day. Every fixture on the big screen with a friendly blues crowd.
+              </div>
+            </div>
+          </div>
+
+          {/* Timezone note */}
+          <div className="info-box" style={{marginBottom:24}}>
+            <span>🕐</span>
+            <span style={{fontSize:13}}>All kickoff times shown in <strong>Pacific Time (PT)</strong>. UK times listed for reference.</span>
+          </div>
+
+          {/* Fixtures */}
+          <div className="fixture-table">
+            {FIXTURES.map(f => (
+              <FixtureCard key={f.id} f={f} />
+            ))}
+          </div>
+
+        </div>
+      </div>
+
+      <Footer />
+      <CookieBanner />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<MatchesPage />);
+</script>
+</body>
+</html>

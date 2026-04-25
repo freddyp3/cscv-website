@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Match Tickets — Chelsea Supporters Club Vancouver</title>
+<meta name="description" content="Request Stamford Bridge tickets through CSCV. Eligibility checker, ticket request form, allocation status.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/styles.css">
+<style>
+/* ── TICKETS PAGE ─────────────────────────────────────────── */
+
+.tickets-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 40px;
+  align-items: start;
+}
+
+/* Eligibility panel */
+.eligibility-panel {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+.eligibility-panel__header {
+  background: var(--off-white);
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.eligibility-panel__title {
+  font-family: 'Archivo', sans-serif;
+  font-size: 15px; font-weight: 800; color: var(--text);
+}
+.eligibility-panel__row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--border);
+}
+.eligibility-panel__row:last-child { border-bottom: none; }
+.eligibility-panel__label { font-size: 14px; font-weight: 500; color: var(--text); }
+.eligibility-panel__detail { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.eligibility-status {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; padding: 4px 10px; border-radius: 3px;
+  white-space: nowrap;
+}
+.status-ok   { background: #f0fdf4; color: #15803d; border: 1px solid #86efac; }
+.status-warn { background: #fffbeb; color: #92400e; border: 1px solid #fcd34d; }
+.status-no   { background: #fff1f2; color: #b91c1c; border: 1px solid #fca5a5; }
+
+/* Deadline tracker */
+.deadline-bar {
+  background: var(--off-white);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin-bottom: 28px;
+  display: flex; align-items: center; gap: 16px;
+}
+.deadline-bar--urgent {
+  background: #fff1f2;
+  border-color: #fca5a5;
+}
+.deadline-bar__days {
+  font-family: 'Archivo', sans-serif;
+  font-size: 40px; font-weight: 800; line-height: 1;
+  color: var(--blue); min-width: 60px; text-align: center;
+}
+.deadline-bar--urgent .deadline-bar__days { color: var(--red); }
+.deadline-bar__days-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted); margin-top: 1px; text-align: center;
+}
+.deadline-bar__body { flex: 1; }
+.deadline-bar__title { font-family: 'Archivo', sans-serif; font-size: 15px; font-weight: 800; color: var(--text); }
+.deadline-bar__detail { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+/* Request form */
+.request-form {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+}
+.request-form__title {
+  font-family: 'Archivo', sans-serif;
+  font-size: 20px; font-weight: 800; color: var(--text);
+  margin-bottom: 22px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Sidebar: how it works */
+.how-it-works {
+  background: var(--blue-dark);
+  border-radius: 12px;
+  padding: 26px;
+  position: sticky;
+  top: 88px;
+}
+.how-it-works__title {
+  font-family: 'Archivo', sans-serif;
+  font-size: 16px; font-weight: 800; color: var(--white);
+  margin-bottom: 20px;
+}
+.hiw-step {
+  display: flex; gap: 14px;
+  padding-bottom: 18px; margin-bottom: 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.hiw-step:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.hiw-step__num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--blue); display: flex; align-items: center;
+  justify-content: center; font-family: 'Archivo', sans-serif;
+  font-size: 13px; font-weight: 800; color: var(--white); flex-shrink: 0;
+}
+.hiw-step__title { font-family: 'Archivo', sans-serif; font-size: 14px; font-weight: 700; color: var(--white); }
+.hiw-step__detail { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 3px; line-height: 1.55; }
+
+/* Status tracker */
+.status-tracker {
+  background: var(--off-white);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 22px;
+  margin-top: 20px;
+}
+.status-tracker__title {
+  font-family: 'Archivo', sans-serif;
+  font-size: 14px; font-weight: 800; color: var(--text);
+  margin-bottom: 16px;
+}
+.status-step {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 0;
+}
+.status-step__dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  flex-shrink: 0;
+}
+.status-step__dot--done { background: #16a34a; }
+.status-step__dot--active { background: var(--blue); box-shadow: 0 0 0 3px rgba(3,70,148,0.2); }
+.status-step__dot--pending { background: var(--border); }
+.status-step__label { font-size: 13px; color: var(--text); font-weight: 500; }
+.status-step__label--muted { color: var(--muted); font-weight: 400; }
+
+/* Guest row */
+.guest-row {
+  background: var(--off-white);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
+}
+.guest-row__label {
+  font-size: 12px; font-weight: 700; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 14px;
+}
+
+@media (max-width: 900px) {
+  .tickets-layout { grid-template-columns: 1fr; }
+  .how-it-works { position: static; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="shared/components.jsx"></script>
+
+<script type="text/babel">
+const { useState } = React;
+
+const HOME_FIXTURES = [
+  { id:1, label:'Chelsea vs Tottenham — Apr 28, 2025' },
+  { id:2, label:'Chelsea vs Man City — May 11, 2025' },
+  { id:3, label:'Chelsea vs Wolves — May 25, 2025' },
+  { id:4, label:'Chelsea vs Fiorentina (UECL) — Jun 1, 2025' },
+];
+
+const ELIGIBILITY = [
+  {
+    label: 'CSCV Membership',
+    detail: 'Adult — Expires Jun 30, 2025',
+    status: 'ok',
+    statusLabel: 'Eligible',
+  },
+  {
+    label: 'Chelsea FC Membership',
+    detail: 'True Blue — TB-00482917 — Verified',
+    status: 'ok',
+    statusLabel: 'Eligible',
+  },
+  {
+    label: 'Loyalty Points Rank',
+    detail: '#4 of 380 members — qualifies for up to 2 tickets',
+    status: 'ok',
+    statusLabel: 'Eligible',
+  },
+  {
+    label: 'Application Deadline',
+    detail: 'May 15, 2025 — 18 days remaining',
+    status: 'ok',
+    statusLabel: 'Open',
+  },
+  {
+    label: 'Pending Requests',
+    detail: 'No outstanding ticket requests',
+    status: 'ok',
+    statusLabel: 'Clear',
+  },
+];
+
+function EligibilityPanel({ eligible }) {
+  return (
+    <div className="eligibility-panel">
+      <div className="eligibility-panel__header">
+        <span className="eligibility-panel__title">Your Eligibility</span>
+        {eligible
+          ? <span className="eligibility-status status-ok">All requirements met</span>
+          : <span className="eligibility-status status-no">Action required</span>
+        }
+      </div>
+      {ELIGIBILITY.map(row => (
+        <div key={row.label} className="eligibility-panel__row">
+          <div>
+            <div className="eligibility-panel__label">{row.label}</div>
+            <div className="eligibility-panel__detail">{row.detail}</div>
+          </div>
+          <span className={`eligibility-status status-${row.status}`}>{row.statusLabel}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function DeadlineBar() {
+  return (
+    <div className="deadline-bar">
+      <div>
+        <div className="deadline-bar__days">18</div>
+        <div className="deadline-bar__days-label">Days left</div>
+      </div>
+      <div style={{width:1,height:40,background:'var(--border)',flexShrink:0}}></div>
+      <div className="deadline-bar__body">
+        <div className="deadline-bar__title">Application deadline: May 15, 2025</div>
+        <div className="deadline-bar__detail">
+          Submit your request before this date. Chelsea FC releases tickets to supporters clubs on a rolling basis — earlier submissions have a higher chance of approval.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RequestForm({ onSubmit }) {
+  const [form, setForm] = useState({
+    match: '', qty: '1',
+    cfcNum: '',
+    guestName: '', guestCfc: '',
+    notes: '',
+    consent: false,
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(form);
+  };
+
+  return (
+    <form className="request-form" onSubmit={handleSubmit}>
+      <div className="request-form__title">Ticket Request</div>
+
+      <div className="form-group">
+        <label className="form-label">Match *</label>
+        <select
+          className="form-select"
+          value={form.match}
+          onChange={e => setForm({...form, match: e.target.value})}
+          required
+        >
+          <option value="">Select a home match...</option>
+          {HOME_FIXTURES.map(f => (
+            <option key={f.id} value={f.id}>{f.label}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="form-group">
+        <label className="form-label">Number of Tickets *</label>
+        <select
+          className="form-select"
+          value={form.qty}
+          onChange={e => setForm({...form, qty: e.target.value})}
+        >
+          <option value="1">1 ticket</option>
+          <option value="2">2 tickets (max based on your tier)</option>
+        </select>
+        <div style={{fontSize:12,color:'var(--muted)',marginTop:5}}>
+          Your current rank (#4) qualifies you for up to 2 tickets. Actual allocation depends on availability and Chelsea FC's discretion.
+        </div>
+      </div>
+
+      <div className="form-group">
+        <label className="form-label">Your Chelsea FC Membership Number *</label>
+        <input
+          className="form-input"
+          placeholder="e.g. TB-00482917"
+          value={form.cfcNum}
+          onChange={e => setForm({...form, cfcNum: e.target.value})}
+          required
+        />
+      </div>
+
+      {form.qty === '2' && (
+        <div className="guest-row">
+          <div className="guest-row__label">Guest Details (Ticket 2)</div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+            <div className="form-group" style={{marginBottom:0}}>
+              <label className="form-label">Guest Full Name *</label>
+              <input
+                className="form-input"
+                placeholder="Full name"
+                value={form.guestName}
+                onChange={e => setForm({...form, guestName: e.target.value})}
+                required
+              />
+            </div>
+            <div className="form-group" style={{marginBottom:0}}>
+              <label className="form-label">Guest Chelsea FC # *</label>
+              <input
+                className="form-input"
+                placeholder="TB-XXXXXXXX"
+                value={form.guestCfc}
+                onChange={e => setForm({...form, guestCfc: e.target.value})}
+                required
+              />
+            </div>
+          </div>
+          <div style={{fontSize:12,color:'var(--muted)',marginTop:10}}>
+            Both applicants must hold active Chelsea FC memberships to be eligible.
+          </div>
+        </div>
+      )}
+
+      <div className="form-group">
+        <label className="form-label">Additional Notes</label>
+        <textarea
+          className="form-textarea"
+          placeholder="Accessibility requirements, seating preferences, travel dates, any other information..."
+          value={form.notes}
+          onChange={e => setForm({...form, notes: e.target.value})}
+          style={{minHeight:80}}
+        />
+      </div>
+
+      <div style={{background:'var(--off-white)',border:'1px solid var(--border)',borderRadius:8,padding:'14px 16px',marginBottom:22}}>
+        <label style={{display:'flex',gap:10,alignItems:'flex-start',cursor:'pointer',fontSize:13,color:'var(--muted)',lineHeight:1.65}}>
+          <input
+            type="checkbox"
+            style={{marginTop:2,flexShrink:0,accentColor:'var(--blue)'}}
+            checked={form.consent}
+            onChange={e => setForm({...form, consent: e.target.checked})}
+            required
+          />
+          <span>
+            I confirm that all details are accurate. I understand that ticket allocation is at Chelsea FC's discretion, and CSCV does not guarantee availability. I have read the{' '}
+            <a href="#" style={{color:'var(--blue)',fontWeight:600}}>Ticket Request Policy</a>.
+          </span>
+        </label>
+      </div>
+
+      <button className="btn btn-primary btn-lg" type="submit" style={{width:'100%'}}>
+        Submit Ticket Request
+      </button>
+      <div style={{fontSize:12,color:'var(--muted)',textAlign:'center',marginTop:10}}>
+        We will contact you within 48 hours of Chelsea FC releasing the allocation.
+      </div>
+    </form>
+  );
+}
+
+function Sidebar() {
+  return (
+    <div>
+      <div className="how-it-works">
+        <div className="how-it-works__title">How Ticket Allocation Works</div>
+        {[
+          ['1','Hold CSCV membership','Active paid membership required for the current season.'],
+          ['2','Hold Chelsea FC membership','True Blue or CFC Blue required before Chelsea\'s deadline.'],
+          ['3','Earn pub points','Attend Brass Fish watch parties to climb the leaderboard.'],
+          ['4','Submit before deadline','Higher-ranked members are contacted first when allocation opens.'],
+          ['5','Confirmation','Status moves from Requested to Approved or Waitlisted. We email you either way.'],
+        ].map(([n,t,d]) => (
+          <div key={n} className="hiw-step">
+            <div className="hiw-step__num">{n}</div>
+            <div>
+              <div className="hiw-step__title">{t}</div>
+              <div className="hiw-step__detail">{d}</div>
+            </div>
+          </div>
+        ))}
+        <div style={{marginTop:18,paddingTop:18,borderTop:'1px solid rgba(255,255,255,0.07)',fontSize:12,color:'rgba(255,255,255,0.35)',lineHeight:1.65}}>
+          Ticket prices are set by Chelsea FC and will be communicated at time of allocation. CSCV does not profit from ticket sales.
+        </div>
+      </div>
+
+      <div className="status-tracker">
+        <div className="status-tracker__title">Your Request Status</div>
+        {[
+          { label:'Not yet submitted', done:false, active:true },
+          { label:'Under review', done:false, active:false },
+          { label:'Allocation confirmed', done:false, active:false },
+          { label:'Approved / Waitlisted', done:false, active:false },
+        ].map((s,i) => (
+          <div key={i} className="status-step">
+            <div className={`status-step__dot ${s.done?'status-step__dot--done':s.active?'status-step__dot--active':'status-step__dot--pending'}`}></div>
+            <span className={`status-step__label ${!s.done&&!s.active?'status-step__label--muted':''}`}>{s.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SuccessState({ form }) {
+  const fixture = HOME_FIXTURES.find(f => String(f.id) === form.match);
+  return (
+    <div className="request-form">
+      <div className="success-box" style={{marginBottom:20}}>
+        <span style={{fontSize:16,fontWeight:800}}>Request submitted</span>
+      </div>
+      <h3 style={{fontFamily:'Archivo',fontSize:18,fontWeight:800,color:'var(--text)',marginBottom:16}}>What happens next</h3>
+      {[
+        'You\'ll receive a confirmation email within the hour.',
+        'When Chelsea FC releases the allocation, we contact eligible members in leaderboard order.',
+        'You\'ll be notified Approved or Waitlisted within 48 hours of the release date.',
+        'If approved, CSCV will coordinate ticket delivery and any payment required.',
+      ].map((s,i) => (
+        <div key={i} style={{display:'flex',gap:12,padding:'8px 0',borderBottom:'1px solid var(--border)',fontSize:14,color:'var(--muted)',lineHeight:1.6}}>
+          <span style={{color:'var(--blue)',fontWeight:800,flexShrink:0,fontFamily:'Archivo'}}>{i+1}</span>
+          <span>{s}</span>
+        </div>
+      ))}
+      {fixture && (
+        <div style={{marginTop:20,background:'var(--off-white)',border:'1px solid var(--border)',borderRadius:8,padding:'14px 18px',fontSize:14}}>
+          <span style={{fontWeight:600,color:'var(--text)'}}>Match requested: </span>
+          <span style={{color:'var(--muted)'}}>{fixture.label}</span>
+        </div>
+      )}
+      <div style={{display:'flex',gap:12,marginTop:24}}>
+        <a href="Pub Points.html" className="btn btn-primary btn-md">Check Your Points Rank</a>
+        <a href="Matches.html" className="btn btn-outline btn-md">View All Fixtures</a>
+      </div>
+    </div>
+  );
+}
+
+function TicketsPage() {
+  const [submitted, setSubmitted] = useState(false);
+  const [submittedForm, setSubmittedForm] = useState(null);
+  const eligible = true;
+
+  const handleSubmit = (form) => {
+    setSubmittedForm(form);
+    setSubmitted(true);
+  };
+
+  return (
+    <div>
+      <Nav />
+
+      <PageHeader
+        label="Stamford Bridge"
+        title="Match Tickets"
+        sub="Request tickets to watch Chelsea at home in London. Allocated by pub points ranking."
+        img="uploads/BANNER_AT_THER_BRIDGE_V3.png"
+      />
+
+      <div className="bg-white">
+        <div className="section">
+
+          {!eligible && (
+            <div className="warn-box" style={{marginBottom:28}}>
+              <span style={{fontWeight:600}}>Action required:</span>
+              <span>You must hold both an active CSCV membership and a Chelsea FC membership to request tickets. See eligibility details below.</span>
+            </div>
+          )}
+
+          <div className="tickets-layout">
+            <div>
+              <EligibilityPanel eligible={eligible} />
+              <DeadlineBar />
+              {submitted
+                ? <SuccessState form={submittedForm} />
+                : <RequestForm onSubmit={handleSubmit} />
+              }
+            </div>
+            <Sidebar />
+          </div>
+
+        </div>
+      </div>
+
+      {/* Points CTA strip */}
+      <div className="bg-dark">
+        <div style={{maxWidth:1200,margin:'0 auto',padding:'40px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:20,flexWrap:'wrap'}}>
+          <div>
+            <div style={{fontFamily:'Archivo',fontSize:20,fontWeight:800,color:'var(--white)'}}>Want higher ticket priority?</div>
+            <div style={{fontSize:14,color:'rgba(255,255,255,0.5)',marginTop:4}}>Attend more watch parties at The Brass Fish to climb the leaderboard and move up the allocation queue.</div>
+          </div>
+          <div style={{display:'flex',gap:12,flexShrink:0}}>
+            <a href="Pub Points.html" className="btn btn-primary btn-md">View Leaderboard</a>
+            <a href="Matches.html" className="btn btn-outline-white btn-md">Upcoming Fixtures</a>
+          </div>
+        </div>
+      </div>
+
+      <Footer />
+      <CookieBanner />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<TicketsPage />);
+</script>
+</body>
+</html>

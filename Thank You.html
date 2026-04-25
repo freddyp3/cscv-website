@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thank You — Chelsea Supporters Club Vancouver</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/styles.css">
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="shared/components.jsx"></script>
+<script type="text/babel">
+function ThankYouPage() {
+  return (
+    <div>
+      <Nav />
+      <div style={{minHeight:'80vh',display:'flex',alignItems:'center',justifyContent:'center',background:'var(--off-white)',padding:'40px 20px'}}>
+        <div style={{maxWidth:540,textAlign:'center',background:'var(--white)',border:'1px solid var(--border)',borderRadius:16,padding:'52px 40px',boxShadow:'0 8px 40px rgba(3,70,148,0.08)'}}>
+          <div style={{width:72,height:72,borderRadius:'50%',background:'#f0fdf4',border:'2px solid #86efac',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 24px',fontSize:28,color:'#16a34a',fontWeight:800,fontFamily:'Archivo'}}>OK</div>
+          <h1 style={{fontFamily:'Archivo',fontSize:40,fontWeight:800,color:'var(--text)',textTransform:'uppercase',lineHeight:1,marginBottom:14}}>Thank You</h1>
+          <p style={{fontSize:16,color:'var(--muted)',lineHeight:1.7,marginBottom:28}}>Your submission has been received. We will be in touch within 48 hours. In the meantime, check out upcoming fixtures or explore your membership benefits.</p>
+          <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
+            <a href="Home.html" className="btn btn-primary btn-md">Back to Home</a>
+            <a href="Matches.html" className="btn btn-outline btn-md">Upcoming Matches</a>
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<ThankYouPage />);
+</script>
+</body>
+</html>

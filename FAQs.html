@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Membership FAQs — Chelsea Supporters Club Vancouver</title>
+<meta name="description" content="Answers to the most common questions about CSCV membership, Stamford Bridge tickets, pub points, and watch parties.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/styles.css">
+<style>
+/* ── FAQS PAGE ───────────────────────────────────────────── */
+
+.faqs-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+/* Search */
+.faq-search {
+  position: relative; margin-bottom: 32px;
+}
+.faq-search__input {
+  width: 100%; padding: 13px 16px 13px 44px;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  font-family: 'Inter', sans-serif; font-size: 15px; color: var(--text);
+  background: var(--white); transition: border-color 0.18s, box-shadow 0.18s;
+}
+.faq-search__input:focus {
+  outline: none; border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(3,70,148,0.1);
+}
+.faq-search__icon {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  font-size: 16px; color: var(--muted); pointer-events: none;
+}
+.faq-search__clear {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: var(--muted); font-size: 18px;
+  cursor: pointer; line-height: 1; padding: 2px 6px; border-radius: 4px;
+  transition: color 0.15s;
+}
+.faq-search__clear:hover { color: var(--text); }
+
+/* Sidebar nav */
+.faq-nav {
+  position: sticky; top: 88px;
+}
+.faq-nav__title {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 12px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.faq-nav__item {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; background: none; border: none; text-align: left;
+  padding: 9px 12px; border-radius: 6px; cursor: pointer;
+  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+  color: var(--muted); transition: all 0.15s; margin-bottom: 2px;
+}
+.faq-nav__item:hover { background: var(--off-white); color: var(--text); }
+.faq-nav__item.active { background: var(--blue); color: var(--white); }
+.faq-nav__count {
+  font-size: 11px; font-weight: 700;
+  background: rgba(255,255,255,0.2); color: inherit;
+  padding: 1px 6px; border-radius: 10px; min-width: 20px; text-align: center;
+}
+.faq-nav__item:not(.active) .faq-nav__count {
+  background: var(--off-white); color: var(--muted);
+}
+
+/* Accordion */
+.faq-group { margin-bottom: 40px; }
+.faq-group__title {
+  font-family: 'Archivo', sans-serif; font-size: 13px; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue);
+  margin-bottom: 4px; padding-bottom: 12px;
+  border-bottom: 2px solid var(--blue);
+  display: inline-block;
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--border);
+}
+.faq-item__btn {
+  width: 100%; background: none; border: none; text-align: left;
+  padding: 20px 0; display: flex; justify-content: space-between;
+  align-items: flex-start; gap: 16px; cursor: pointer;
+  transition: color 0.15s;
+}
+.faq-item__btn:hover .faq-item__question { color: var(--blue); }
+.faq-item__question {
+  font-family: 'Archivo', sans-serif; font-size: 16px; font-weight: 700;
+  color: var(--text); line-height: 1.35; transition: color 0.15s;
+  flex: 1;
+}
+.faq-item.open .faq-item__question { color: var(--blue); }
+.faq-item__icon {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+  border: 1.5px solid var(--border); display: flex; align-items: center;
+  justify-content: center; font-size: 15px; color: var(--muted);
+  transition: all 0.18s; margin-top: 1px;
+}
+.faq-item.open .faq-item__icon {
+  background: var(--blue); border-color: var(--blue); color: var(--white);
+}
+.faq-item__answer {
+  overflow: hidden; max-height: 0;
+  transition: max-height 0.32s ease, padding 0.2s;
+}
+.faq-item__answer.open { max-height: 600px; padding-bottom: 20px; }
+.faq-item__answer p {
+  font-size: 15px; color: var(--muted); line-height: 1.75;
+}
+.faq-item__answer a { color: var(--blue); font-weight: 600; }
+
+/* Deep link anchor */
+.faq-anchor { scroll-margin-top: 100px; }
+
+/* Empty state */
+.faq-empty {
+  text-align: center; padding: 56px 20px;
+  color: var(--muted); font-size: 15px;
+}
+.faq-empty strong { color: var(--text); }
+
+/* Contact strip */
+.contact-strip {
+  background: var(--blue-dark); border-radius: 12px;
+  padding: 28px 32px; display: flex; align-items: center;
+  gap: 24px; flex-wrap: wrap; margin-top: 48px;
+}
+
+@media (max-width: 860px) {
+  .faqs-layout { grid-template-columns: 1fr; }
+  .faq-nav { position: static; display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 24px; }
+  .faq-nav__title { display: none; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="shared/components.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useMemo } = React;
+
+const FAQS = [
+  {
+    id: 'no-international-membership',
+    cat: 'Chelsea FC Membership',
+    q: 'Is there still a separate International / Global Membership for fans living outside of the UK?',
+    a: 'No. Membership now has 4 types wherever you live. There is no longer a separate International or Global tier.',
+  },
+  {
+    id: 'cost-this-season',
+    cat: 'Chelsea FC Membership',
+    q: 'I was an International Member last season at £40. What is the cost this season?',
+    a: 'True Blue (Ticket Priority 1) is £60. CFC Blue (Ticket Priority 2) is £45. Junior (under 16 on July 31, 2025) is £20.',
+  },
+  {
+    id: 'which-level',
+    cat: 'Chelsea FC Membership',
+    q: 'Which level of Chelsea FC membership should I choose?',
+    a: 'If you are planning on going to a match, True Blue (Ticket Priority 1) at £60 is the best option. If not, CFC Blue (Ticket Priority 2) at £45 provides ticket access but without priority. Chelsea sets priority for each match and there is a risk of all tickets selling ahead of CFC Blue Priority 2 members.',
+  },
+  {
+    id: 'other-benefits',
+    cat: 'Chelsea FC Membership',
+    q: 'Other than ticket access, what other benefits are there for True Blue and CFC Blue membership?',
+    a: 'Lots! See the comparison chart on Chelsea\'s website for the full list. For more information plus Chelsea\'s FAQ list go to chelseafc.com/en/official-chelsea-memberships.',
+  },
+  {
+    id: 'renew-early',
+    cat: 'Chelsea FC Membership',
+    q: 'Is it important to renew early?',
+    a: 'Absolutely yes. Please renew or join as soon as possible — by Friday June 27th, 2025 — to help maintain our Platinum status, earn 5 Chelsea Loyalty Points, and enter a chance to win a 2025–26 jersey.',
+  },
+  {
+    id: 'cscv-and-trueblue',
+    cat: 'CSCV & Chelsea FC',
+    q: 'How does membership of Chelsea Supporters\' Club Vancouver (CSCV) fit with True Blue and CFC Blue membership?',
+    a: 'CSCV is an official Chelsea Supporters\' Club and a hub for local fans in Vancouver. If we maintain our Platinum Tier status, we have 7 days priority over individual True Blue and CFC Blue ticket applications, plus access to better seat choices. Your CSCV membership and your Chelsea FC membership work together — you need both to be eligible for tickets through us.',
+  },
+  {
+    id: 'why-trueblue-no-tickets',
+    cat: 'CSCV & Chelsea FC',
+    q: 'I may not need access to match tickets — why should I still be a True Blue or CFC Blue member?',
+    a: 'Being a True Blue or CFC Blue member and a CSCV member is a collective benefit. If you or others have received tickets via us in the past, it was because CSCV collectively achieved and maintained Platinum supporters\' club status. Plus there are far more benefits to membership than just ticket access.',
+  },
+  {
+    id: 'apply-for-ticket',
+    cat: 'Tickets',
+    q: 'How do I apply for a match ticket via CSCV?',
+    a: 'You need to be an active CSCV member and either a True Blue or CFC Blue. Tell us what match ticket you want at least 8 weeks in advance and we apply on your behalf. Use the Match Tickets page on this site to submit your request.',
+  },
+  {
+    id: 'loyalty-points',
+    cat: 'Tickets',
+    q: 'What are Chelsea Loyalty Points?',
+    a: 'Chelsea operates a points system to reward match-going fans. Each match attended earns points — smaller games earn more than bigger games. A minimum number of points is required for a ticket application; typically 5 points is enough through to December. Renewing your Chelsea FC membership early (by June 27th) earns you 5 points automatically. For full details visit chelseafc.com/en/official-chelsea-memberships.',
+  },
+  {
+    id: 'how-chelsea-knows',
+    cat: 'CSCV & Chelsea FC',
+    q: 'How does Chelsea FC know I am a member of CSCV?',
+    a: 'CSCV provides Chelsea FC with a list of CSCV members who are also True Blues or CFC Blues. Chelsea then records those members as "affiliated" to CSCV, which is required for ticket applications to be processed through us.',
+  },
+  {
+    id: 'why-cscv-needs-trueblue',
+    cat: 'CSCV & Chelsea FC',
+    q: 'Why does CSCV need to know that I am a True Blue or CFC Blue?',
+    a: 'We need at least 50 True Blue, CFC Blue, or Junior members affiliated to CSCV to maintain our Platinum status. Other levels of Chelsea FC membership do not count toward our Platinum threshold. We can only apply for tickets for those who have been affiliated to CSCV by Chelsea FC.',
+  },
+  {
+    id: 'why-platinum-matters',
+    cat: 'CSCV & Chelsea FC',
+    q: 'Why is it important for CSCV to maintain Platinum Club status?',
+    a: 'Chelsea FC is not adding any new Platinum Clubs. Once Platinum status is lost, it cannot be regained. If we lose that status we no longer have top priority for match tickets and will lose access to away match tickets entirely. Maintaining Platinum status protects every member\'s ability to get tickets.',
+  },
+  {
+    id: 'where-renew-cfc',
+    cat: 'Chelsea FC Membership',
+    q: 'Where do I renew or join Chelsea FC True Blue, CFC Blue, or Junior membership?',
+    a: 'Visit chelseafc.com/en/official-chelsea-memberships to renew or join. Do it as soon as possible — ideally by June 27th, 2025 — to earn your 5 loyalty points and protect our Platinum status.',
+  },
+  {
+    id: 'where-renew-cscv',
+    cat: 'CSCV Membership',
+    q: 'Where do I renew or join Chelsea Supporters\' Club Vancouver?',
+    a: 'Click through to the Memberships page on this site for payment links. CSCV Adult membership is $30 CAD per year. Junior is $10 CAD per year. Once joined, email us to let us know you\'ve also joined or renewed your Chelsea FC membership so we can affiliate you.',
+  },
+  {
+    id: 'more-information',
+    cat: 'CSCV Membership',
+    q: 'Where can I find more information on membership options?',
+    a: 'Visit our website at trueblues.ca/memberships for full details, or go directly to chelseafc.com/en/official-chelsea-memberships for Chelsea\'s own membership information and FAQ list.',
+  },
+];
+
+const CATEGORIES = ['All', 'Chelsea FC Membership', 'CSCV Membership', 'CSCV & Chelsea FC', 'Tickets'];
+
+function FAQsPage() {
+  const [openId, setOpenId] = useState(null);
+  const [search, setSearch] = useState('');
+  const [cat, setCat] = useState('All');
+
+  // Deep-link support
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '');
+    if (hash) {
+      setOpenId(hash);
+      const faq = FAQS.find(f => f.id === hash);
+      if (faq) setCat('All');
+    }
+  }, []);
+
+  const filtered = useMemo(() => {
+    const q = search.toLowerCase();
+    return FAQS.filter(f => {
+      const matchesCat = cat === 'All' || f.cat === cat;
+      const matchesSearch = !q || f.q.toLowerCase().includes(q) || f.a.toLowerCase().includes(q);
+      return matchesCat && matchesSearch;
+    });
+  }, [cat, search]);
+
+  const grouped = useMemo(() => {
+    const groups = {};
+    filtered.forEach(f => {
+      if (!groups[f.cat]) groups[f.cat] = [];
+      groups[f.cat].push(f);
+    });
+    return groups;
+  }, [filtered]);
+
+  const countByCat = useMemo(() => {
+    const counts = { All: FAQS.length };
+    FAQS.forEach(f => { counts[f.cat] = (counts[f.cat] || 0) + 1; });
+    return counts;
+  }, []);
+
+  const toggle = (id) => setOpenId(prev => prev === id ? null : id);
+
+  return (
+    <div>
+      <Nav />
+
+      <PageHeader
+        label="Help & Information"
+        title="Membership FAQs"
+        sub="Answers to the most common questions about CSCV, tickets, pub points and watch parties."
+      />
+
+      <div className="bg-white">
+        <div className="section">
+          <div className="faqs-layout">
+
+            {/* Sidebar */}
+            <div className="faq-nav">
+              <div className="faq-nav__title">Categories</div>
+              {CATEGORIES.map(c => (
+                <button
+                  key={c}
+                  className={`faq-nav__item${cat === c ? ' active' : ''}`}
+                  onClick={() => { setCat(c); setSearch(''); }}
+                >
+                  {c}
+                  <span className="faq-nav__count">{countByCat[c] || 0}</span>
+                </button>
+              ))}
+
+              <div style={{marginTop:28,paddingTop:20,borderTop:'1px solid var(--border)'}}>
+                <div className="faq-nav__title">Can't find your answer?</div>
+                <p style={{fontSize:13,color:'var(--muted)',lineHeight:1.65,marginBottom:12}}>
+                  Email us and we'll get back to you within 48 hours.
+                </p>
+                <a href="Contact.html" className="btn btn-primary btn-sm" style={{display:'block',textAlign:'center'}}>
+                  Contact Us
+                </a>
+              </div>
+            </div>
+
+            {/* Main content */}
+            <div>
+              <div className="faq-search">
+                <span className="faq-search__icon">&#x2315;</span>
+                <input
+                  className="faq-search__input"
+                  type="text"
+                  placeholder="Search FAQs..."
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                />
+                {search && (
+                  <button className="faq-search__clear" onClick={() => setSearch('')}>×</button>
+                )}
+              </div>
+
+              {search && (
+                <div style={{marginBottom:20,fontSize:13,color:'var(--muted)'}}>
+                  {filtered.length === 0
+                    ? <>No results for <strong style={{color:'var(--text)'}}>"{search}"</strong></>
+                    : <>{filtered.length} result{filtered.length !== 1 ? 's' : ''} for <strong style={{color:'var(--text)'}}>"{search}"</strong></>
+                  }
+                </div>
+              )}
+
+              {filtered.length === 0 ? (
+                <div className="faq-empty">
+                  No FAQs match <strong>"{search}"</strong>.<br/>
+                  Try a different search, or{' '}
+                  <a href="Contact.html" style={{color:'var(--blue)',fontWeight:600}}>contact us directly</a>.
+                </div>
+              ) : (
+                Object.entries(grouped).map(([group, items]) => (
+                  <div key={group} className="faq-group">
+                    {(cat === 'All' || search) && (
+                      <div className="faq-group__title">{group}</div>
+                    )}
+                    {items.map(faq => (
+                      <div
+                        key={faq.id}
+                        id={faq.id}
+                        className={`faq-item faq-anchor${openId === faq.id ? ' open' : ''}`}
+                      >
+                        <button
+                          className="faq-item__btn"
+                          onClick={() => toggle(faq.id)}
+                          aria-expanded={openId === faq.id}
+                        >
+                          <span className="faq-item__question">{faq.q}</span>
+                          <span className="faq-item__icon">
+                            {openId === faq.id ? '−' : '+'}
+                          </span>
+                        </button>
+                        <div className={`faq-item__answer${openId === faq.id ? ' open' : ''}`}>
+                          <p>{faq.a}</p>
+                          <div style={{marginTop:12,display:'flex',gap:10,flexWrap:'wrap'}}>
+                            {faq.cat === 'CSCV Membership' && (
+                              <a href="Memberships.html" className="btn btn-outline btn-sm">Join CSCV</a>
+                            )}
+                            {faq.cat === 'Chelsea FC Membership' && (
+                              <a href="https://www.chelseafc.com/en/official-chelsea-memberships" target="_blank" className="btn btn-outline btn-sm">Chelsea FC Memberships</a>
+                            )}
+                            {faq.cat === 'CSCV & Chelsea FC' && (
+                              <a href="Memberships.html" className="btn btn-outline btn-sm">Join Now</a>
+                            )}
+                            {faq.cat === 'Tickets' && (
+                              <a href="Tickets.html" className="btn btn-outline btn-sm">Request Tickets</a>
+                            )}
+                            <button
+                              className="btn btn-sm"
+                              style={{background:'none',border:'1.5px solid var(--border)',color:'var(--muted)',fontSize:11}}
+                              onClick={() => {
+                                const url = window.location.origin + window.location.pathname + '#' + faq.id;
+                                navigator.clipboard?.writeText(url);
+                              }}
+                            >
+                              Copy link
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ))
+              )}
+
+              {/* Contact strip */}
+              <div className="contact-strip">
+                <div style={{flex:1}}>
+                  <div style={{fontFamily:'Archivo',fontSize:18,fontWeight:800,color:'var(--white)'}}>Still have a question?</div>
+                  <div style={{fontSize:14,color:'rgba(255,255,255,0.5)',marginTop:4}}>
+                    Our team responds within 48 hours. You can also email us directly at chelseafcvancouver@gmail.com.
+                  </div>
+                </div>
+                <div style={{display:'flex',gap:10,flexShrink:0}}>
+                  <a href="Contact.html" className="btn btn-primary btn-md">Send a Message</a>
+                  <a href="mailto:chelseafcvancouver@gmail.com" className="btn btn-outline-white btn-md">Email Us</a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <Footer />
+      <CookieBanner />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<FAQsPage />);
+</script>
+</body>
+</html>

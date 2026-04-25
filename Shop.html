@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop — Chelsea Supporters Club Vancouver</title>
+<meta name="description" content="Official CSCV merchandise — t-shirts, sticker packs, and bundles. Members get 10% off.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/styles.css">
+<style>
+/* ── SHOP PAGE ────────────────────────────────────────────── */
+
+.shop-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 40px;
+  align-items: start;
+}
+
+/* Product grid */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.product-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.18s, box-shadow 0.18s, transform 0.18s;
+  cursor: pointer;
+}
+.product-card:hover {
+  border-color: var(--blue);
+  box-shadow: 0 8px 32px rgba(3,70,148,0.1);
+  transform: translateY(-2px);
+}
+.product-card--selected {
+  border-color: var(--blue);
+  box-shadow: 0 8px 32px rgba(3,70,148,0.12);
+}
+
+.product-card__badge {
+  background: var(--blue); color: var(--white);
+  font-size: 9px; font-weight: 800; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 5px 0; text-align: center;
+}
+.product-card__badge--member { background: var(--blue-dark); }
+
+.product-card__img {
+  aspect-ratio: 4/3; overflow: hidden;
+  background: var(--off-white);
+  display: flex; align-items: center; justify-content: center;
+}
+.product-card__img img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.3s;
+}
+.product-card:hover .product-card__img img { transform: scale(1.04); }
+
+.product-card__body { padding: 16px; }
+.product-card__name {
+  font-family: 'Archivo', sans-serif; font-size: 16px; font-weight: 800;
+  color: var(--text); margin-bottom: 6px; line-height: 1.2;
+}
+.product-card__price {
+  font-family: 'Archivo', sans-serif; font-size: 22px; font-weight: 800; color: var(--blue);
+}
+.product-card__price-note { font-size: 12px; color: var(--muted); font-family: 'Inter', sans-serif; font-weight: 400; }
+
+/* Size selector */
+.size-grid { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0; }
+.size-btn {
+  padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: 700;
+  cursor: pointer; border: 1.5px solid var(--border); background: var(--white);
+  color: var(--muted); transition: all 0.15s; font-family: 'Inter', sans-serif;
+}
+.size-btn:hover { border-color: var(--blue); color: var(--blue); }
+.size-btn.selected { border-color: var(--blue); background: var(--blue); color: var(--white); }
+.size-btn.oos { opacity: 0.35; cursor: not-allowed; text-decoration: line-through; }
+
+/* Cart sidebar */
+.cart-sidebar {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  position: sticky;
+  top: 88px;
+}
+.cart-sidebar__title {
+  font-family: 'Archivo', sans-serif; font-size: 18px; font-weight: 800;
+  color: var(--text); margin-bottom: 20px;
+  padding-bottom: 16px; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.cart-item {
+  display: flex; gap: 12px; padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.cart-item__img {
+  width: 52px; height: 52px; border-radius: 6px;
+  object-fit: cover; flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+.cart-item__name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.cart-item__meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.cart-item__price { font-family: 'Archivo', sans-serif; font-size: 15px; font-weight: 800; color: var(--blue); margin-top: 2px; }
+.cart-item__remove {
+  background: none; border: none; color: var(--muted); font-size: 16px;
+  cursor: pointer; padding: 2px 6px; border-radius: 4px; transition: color 0.15s;
+  align-self: flex-start; margin-left: auto; flex-shrink: 0;
+}
+.cart-item__remove:hover { color: var(--red); }
+
+.cart-total {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 0; border-top: 2px solid var(--text); margin-top: 4px;
+}
+.cart-total__label { font-family: 'Archivo', sans-serif; font-size: 15px; font-weight: 800; color: var(--text); }
+.cart-total__val { font-family: 'Archivo', sans-serif; font-size: 24px; font-weight: 800; color: var(--blue); }
+
+/* Pickup note */
+.pickup-note {
+  background: var(--off-white); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 14px; margin-top: 12px;
+  font-size: 12px; color: var(--muted); line-height: 1.6;
+}
+
+/* Empty cart */
+.cart-empty {
+  text-align: center; padding: 32px 0; color: var(--muted); font-size: 14px;
+}
+
+/* Member discount banner */
+.member-banner {
+  background: #eff6ff; border: 1px solid #bfdbfe;
+  border-radius: 8px; padding: 12px 16px; margin-bottom: 24px;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: #1e40af;
+}
+
+/* Order confirmation */
+.order-confirm {
+  text-align: center; padding: 40px 20px;
+}
+
+@media (max-width: 900px) {
+  .shop-layout { grid-template-columns: 1fr; }
+  .product-grid { grid-template-columns: repeat(2,1fr); }
+  .cart-sidebar { position: static; }
+}
+@media (max-width: 500px) {
+  .product-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="shared/components.jsx"></script>
+
+<script type="text/babel">
+const { useState } = React;
+
+const PRODUCTS = [
+  {
+    id: 1,
+    name: 'CSCV Classic T-Shirt',
+    price: 40,
+    img: 'uploads/Chelsea_Vancouver_Tshirt_2019.jpeg',
+    sizes: ['S','M','L','XL','XXL'],
+    oos: [],
+    badge: 'Bestseller',
+    desc: 'The classic CSCV crest tee. Royal blue with white print. 100% cotton.',
+  },
+  {
+    id: 2,
+    name: 'CSCV 2019 Home Shirt',
+    price: 45,
+    img: 'uploads/Chelsea_Vancouver_Tshirt_2019__back_and_front.png',
+    sizes: ['S','M','L','XL'],
+    oos: ['S'],
+    badge: null,
+    desc: 'The 2019 edition CSCV home shirt — front crest, back sponsor, sleeve detail.',
+  },
+  {
+    id: 3,
+    name: 'T-Shirt + Sticker Bundle',
+    price: 50,
+    img: 'uploads/Chelsea_Vancouver_Tshirt_and_stickers.jpg',
+    sizes: ['S','M','L','XL','XXL'],
+    oos: [],
+    badge: 'Bundle',
+    desc: 'Classic tee plus a full CSCV sticker pack. Best value.',
+  },
+  {
+    id: 4,
+    name: 'CSCV Sticker Pack',
+    price: 10,
+    img: 'uploads/Chelsea_Vancouver_Tshirt_and_stickers.jpg',
+    sizes: null,
+    oos: [],
+    badge: null,
+    desc: 'Set of CSCV stickers. Great for laptops, cars, or water bottles.',
+  },
+];
+
+function ProductCard({ product, onAdd }) {
+  const [size, setSize] = useState(null);
+  const [added, setAdded] = useState(false);
+
+  const handleAdd = () => {
+    if (product.sizes && !size) { alert('Please select a size first.'); return; }
+    onAdd({ ...product, size });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1800);
+  };
+
+  return (
+    <div className="product-card">
+      {product.badge && (
+        <div className="product-card__badge">{product.badge}</div>
+      )}
+      <div className="product-card__img">
+        <img src={product.img} alt={product.name} loading="lazy" />
+      </div>
+      <div className="product-card__body">
+        <div className="product-card__name">{product.name}</div>
+        <div className="product-card__price">
+          ${product.price} <span className="product-card__price-note">CAD</span>
+        </div>
+        <div style={{fontSize:12,color:'var(--muted)',marginTop:4,marginBottom:10,lineHeight:1.5}}>{product.desc}</div>
+
+        {product.sizes && (
+          <div className="size-grid">
+            {product.sizes.map(s => (
+              <button
+                key={s}
+                className={`size-btn${size===s?' selected':''}${product.oos.includes(s)?' oos':''}`}
+                onClick={() => !product.oos.includes(s) && setSize(s)}
+                disabled={product.oos.includes(s)}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <button
+          className={`btn btn-md ${added?'btn-outline':'btn-primary'}`}
+          style={{width:'100%',marginTop:10,transition:'all 0.2s',
+            ...(added?{borderColor:'#86efac',color:'#15803d',background:'#f0fdf4'}:{})}}
+          onClick={handleAdd}
+        >
+          {added ? 'Added to Cart' : 'Add to Cart'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function CartSidebar({ cart, onRemove, onCheckout, orderDone }) {
+  const total = cart.reduce((s,i) => s + i.price, 0);
+  const memberTotal = Math.round(total * 0.9);
+
+  if (orderDone) return (
+    <div className="cart-sidebar">
+      <div className="order-confirm">
+        <div style={{width:48,height:48,borderRadius:'50%',background:'#f0fdf4',border:'2px solid #86efac',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 16px',fontFamily:'Archivo',fontSize:18,fontWeight:800,color:'#16a34a'}}>OK</div>
+        <div style={{fontFamily:'Archivo',fontSize:20,fontWeight:800,color:'var(--text)',marginBottom:8}}>Order Confirmed!</div>
+        <div style={{fontSize:13,color:'var(--muted)',lineHeight:1.65,marginBottom:20}}>
+          Check your email for confirmation. Items can be collected at The Brass Fish on match day, or we'll arrange shipping.
+        </div>
+        <a href="Home.html" className="btn btn-outline btn-sm" style={{display:'block',textAlign:'center'}}>Back to Home</a>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="cart-sidebar">
+      <div className="cart-sidebar__title">
+        <span>Your Cart</span>
+        {cart.length > 0 && (
+          <span style={{background:'var(--blue)',color:'var(--white)',borderRadius:'50%',width:22,height:22,display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:800}}>{cart.length}</span>
+        )}
+      </div>
+
+      {cart.length === 0 ? (
+        <div className="cart-empty">
+          Your cart is empty.<br/>
+          <span style={{fontSize:12,marginTop:6,display:'block'}}>Add a product to get started.</span>
+        </div>
+      ) : (
+        <>
+          {cart.map((item, i) => (
+            <div key={i} className="cart-item">
+              <img className="cart-item__img" src={item.img} alt={item.name} />
+              <div style={{flex:1}}>
+                <div className="cart-item__name">{item.name}</div>
+                <div className="cart-item__meta">{item.size ? `Size: ${item.size}` : 'One size'}</div>
+                <div className="cart-item__price">${item.price} CAD</div>
+              </div>
+              <button className="cart-item__remove" onClick={() => onRemove(i)}>×</button>
+            </div>
+          ))}
+
+          <div className="cart-total">
+            <span className="cart-total__label">Total</span>
+            <span className="cart-total__val">${total} CAD</span>
+          </div>
+
+          <div style={{background:'#eff6ff',border:'1px solid #bfdbfe',borderRadius:6,padding:'8px 12px',fontSize:12,color:'#1e40af',marginBottom:14}}>
+            Members save 10% — your price: <strong>${memberTotal} CAD</strong>
+          </div>
+
+          <button className="btn btn-primary btn-lg" style={{width:'100%'}} onClick={onCheckout}>
+            Checkout — ${total} CAD
+          </button>
+
+          <div className="pickup-note">
+            Pickup at The Brass Fish available on any match day — just select at checkout. Canada-wide shipping also available.
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function ShopPage() {
+  const [cart, setCart] = useState([]);
+  const [orderDone, setOrderDone] = useState(false);
+
+  const addToCart = (product) => {
+    setCart(c => [...c, product]);
+  };
+  const removeFromCart = (index) => {
+    setCart(c => c.filter((_,i) => i !== index));
+  };
+  const checkout = () => {
+    setOrderDone(true);
+    setCart([]);
+  };
+
+  return (
+    <div>
+      <Nav cartCount={cart.length} />
+
+      <PageHeader
+        label="Official Merchandise"
+        title="Shop"
+        sub="Authentic CSCV gear. Members get 10% off at checkout."
+      />
+
+      <div className="bg-off-white">
+        <div className="section">
+
+          <div className="member-banner">
+            <span style={{fontWeight:700}}>Members save 10%</span>
+            <span>— discount applied automatically at checkout. Some items included in your membership welcome pack.</span>
+            <a href="Memberships.html" style={{marginLeft:'auto',color:'var(--blue)',fontWeight:700,fontSize:12,flexShrink:0}}>Join to unlock</a>
+          </div>
+
+          <div className="shop-layout">
+            <div>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20,flexWrap:'wrap',gap:8}}>
+                <div style={{fontFamily:'Archivo',fontSize:18,fontWeight:800,color:'var(--text)'}}>
+                  All Products <span style={{color:'var(--muted)',fontWeight:400,fontSize:14}}>({PRODUCTS.length} items)</span>
+                </div>
+              </div>
+              <div className="product-grid">
+                {PRODUCTS.map(p => (
+                  <ProductCard key={p.id} product={p} onAdd={addToCart} />
+                ))}
+              </div>
+
+              <div style={{marginTop:40,background:'var(--white)',border:'1.5px solid var(--border)',borderRadius:12,padding:'24px 28px'}}>
+                <div style={{fontFamily:'Archivo',fontSize:16,fontWeight:800,color:'var(--text)',marginBottom:8}}>Ordering & Delivery</div>
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+                  {[
+                    ['Pub pickup','Collect at The Brass Fish on any match day. Free.'],
+                    ['Canada shipping','Shipped via Canada Post. $8–$14 flat rate.'],
+                    ['Processing time','Orders fulfilled within 5–7 business days.'],
+                    ['Questions','Email chelseafcvancouver@gmail.com for size advice or bulk orders.'],
+                  ].map(([t,d]) => (
+                    <div key={t} style={{padding:'12px 0',borderTop:'1px solid var(--border)'}}>
+                      <div style={{fontFamily:'Archivo',fontSize:13,fontWeight:700,color:'var(--text)',marginBottom:3}}>{t}</div>
+                      <div style={{fontSize:13,color:'var(--muted)',lineHeight:1.5}}>{d}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <CartSidebar
+              cart={cart}
+              onRemove={removeFromCart}
+              onCheckout={checkout}
+              orderDone={orderDone}
+            />
+          </div>
+
+        </div>
+      </div>
+
+      <Footer />
+      <CookieBanner />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<ShopPage />);
+</script>
+</body>
+</html>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attendance Prizes — Chelsea Supporters Club Vancouver</title>
+<meta name="description" content="CSCV pub points leaderboard, your point balance, reward ladder, and the Run-In Bonus draw.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/styles.css">
+<style>
+/* ── PUB POINTS PAGE ──────────────────────────────────────── */
+
+.points-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+/* Personal balance card */
+.balance-card {
+  background: var(--blue-dark);
+  border-radius: 14px;
+  padding: 28px;
+  margin-bottom: 20px;
+}
+.balance-card__label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
+  text-transform: uppercase; color: rgba(255,255,255,0.4);
+  margin-bottom: 8px;
+}
+.balance-card__num {
+  font-family: 'Archivo', sans-serif;
+  font-size: 72px; font-weight: 800; color: var(--white);
+  line-height: 1;
+}
+.balance-card__sub {
+  font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 4px;
+}
+.balance-card__divider {
+  height: 1px; background: rgba(255,255,255,0.08); margin: 20px 0;
+}
+.balance-card__stat {
+  display: flex; justify-content: space-between;
+  font-size: 13px; padding: 6px 0;
+}
+.balance-card__stat-label { color: rgba(255,255,255,0.45); }
+.balance-card__stat-val { color: var(--white); font-weight: 600; }
+
+/* Earn methods */
+.earn-card {
+  background: var(--off-white);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 22px;
+  margin-bottom: 20px;
+}
+.earn-card__title {
+  font-family: 'Archivo', sans-serif;
+  font-size: 14px; font-weight: 800; color: var(--text);
+  margin-bottom: 14px;
+}
+.earn-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.earn-row:last-child { border-bottom: none; }
+.earn-row__label { color: var(--muted); }
+.earn-row__pts {
+  font-family: 'Archivo', sans-serif; font-size: 15px;
+  font-weight: 800; color: var(--blue);
+}
+
+/* Reward ladder */
+.reward-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 22px;
+}
+.reward-card__title {
+  font-family: 'Archivo', sans-serif;
+  font-size: 14px; font-weight: 800; color: var(--text);
+  margin-bottom: 16px;
+}
+.reward-tier {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.reward-tier:last-child { border-bottom: none; }
+.reward-tier__pts {
+  font-family: 'Archivo', sans-serif; font-size: 18px;
+  font-weight: 800; color: var(--blue); min-width: 64px;
+}
+.reward-tier__name { font-size: 14px; font-weight: 600; color: var(--text); flex: 1; }
+.reward-tier__status {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; padding: 3px 9px; border-radius: 3px;
+}
+.reward-tier__bar {
+  position: absolute; bottom: 0; left: 0; height: 2px;
+  background: var(--blue); border-radius: 1px; transition: width 0.8s ease;
+}
+
+/* Leaderboard */
+.lb-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 16px;
+}
+.lb-title {
+  font-family: 'Archivo', sans-serif; font-size: 20px; font-weight: 800; color: var(--text);
+}
+.lb-table { display: flex; flex-direction: column; gap: 6px; }
+.lb-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 16px; border-radius: 8px;
+  background: var(--white); border: 1.5px solid var(--border);
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+.lb-row:hover { border-color: var(--blue); box-shadow: 0 2px 12px rgba(3,70,148,0.07); }
+.lb-row--you { background: #eff6ff; border-color: var(--blue); }
+.lb-row--top { background: #fffbee; border-color: rgba(219,161,17,0.4); }
+.lb-rank {
+  font-family: 'Archivo', sans-serif; font-size: 18px; font-weight: 800;
+  color: var(--muted); min-width: 34px;
+}
+.lb-rank--1 { color: #b45309; }
+.lb-rank--2 { color: var(--muted); }
+.lb-rank--3 { color: #92400e; }
+.lb-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--blue-dark); display: flex; align-items: center;
+  justify-content: center; font-family: 'Archivo', sans-serif;
+  font-weight: 800; font-size: 13px; color: var(--white); flex-shrink: 0;
+}
+.lb-avatar--you { background: var(--blue); }
+.lb-name { flex: 1; font-size: 14px; font-weight: 500; color: var(--text); }
+.lb-pts-bar { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; max-width: 100px; }
+.lb-pts-fill { height: 100%; background: var(--blue); border-radius: 2px; }
+.lb-pts-fill--top { background: #b45309; }
+.lb-pts-val {
+  font-family: 'Archivo', sans-serif; font-size: 18px; font-weight: 800;
+  color: var(--text); min-width: 40px; text-align: right;
+}
+.lb-pts-label { font-size: 10px; color: var(--muted); }
+
+/* Run-in bonus */
+.runin-card {
+  background: var(--blue-dark); border-radius: 12px; padding: 24px 28px;
+  margin-top: 20px;
+}
+.runin-matches { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-top: 16px; }
+.runin-match {
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px; padding: 12px 10px; text-align: center;
+}
+.runin-match--done { background: rgba(3,70,148,0.3); border-color: rgba(3,70,148,0.5); }
+.runin-match__label { font-size: 11px; color: rgba(255,255,255,0.4); margin-bottom: 4px; }
+.runin-match__name { font-family: 'Archivo', sans-serif; font-size: 13px; font-weight: 700; color: var(--white); }
+.runin-match__check { font-size: 16px; margin-top: 6px; color: rgba(255,255,255,0.3); }
+.runin-match--done .runin-match__check { color: #4ade80; }
+
+@media (max-width: 900px) {
+  .points-layout { grid-template-columns: 1fr; }
+  .runin-matches { grid-template-columns: repeat(2,1fr); }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="shared/components.jsx"></script>
+
+<script type="text/babel">
+const { useState } = React;
+
+const MY_PTS = 114;
+const MAX_PTS = 160;
+
+const LEADERBOARD = [
+  { rank:1,  name:'James T.',   pts:142, initials:'JT' },
+  { rank:2,  name:'Sarah M.',   pts:138, initials:'SM' },
+  { rank:3,  name:'Raj P.',     pts:127, initials:'RP' },
+  { rank:4,  name:'You',        pts:114, initials:'ME', you:true },
+  { rank:5,  name:'Chris W.',   pts:108, initials:'CW' },
+  { rank:6,  name:'Emma L.',    pts:96,  initials:'EL' },
+  { rank:7,  name:'David K.',   pts:89,  initials:'DK' },
+  { rank:8,  name:'Maria S.',   pts:84,  initials:'MS' },
+  { rank:9,  name:'Tom N.',     pts:77,  initials:'TN' },
+  { rank:10, name:'Kate B.',    pts:71,  initials:'KB' },
+  { rank:11, name:'Luca M.',    pts:65,  initials:'LM' },
+  { rank:12, name:'Anika R.',   pts:60,  initials:'AR' },
+  { rank:13, name:'Ben W.',     pts:54,  initials:'BW' },
+  { rank:14, name:'Priya S.',   pts:48,  initials:'PS' },
+  { rank:15, name:'Marc D.',    pts:42,  initials:'MD' },
+];
+
+const REWARDS = [
+  { pts:100, name:'CSCV Cap',           img:'uploads/Chelsea_Vancouver.png' },
+  { pts:150, name:'CSCV Scarf',         img:'uploads/Chelsea_Vancouver.png' },
+  { pts:200, name:'CSCV Retro Shirt',   img:'uploads/Chelsea_Vancouver_Tshirt_2019.jpeg' },
+  { pts:300, name:'CSCV Current Shirt', img:'uploads/Chelsea_Vancouver_Tshirt_and_stickers.jpg' },
+];
+
+const EARN_METHODS = [
+  { label:'Match attendance (per visit)',     pts:'10 pts' },
+  { label:'Bring a guest',                    pts:'+5 pts' },
+  { label:'Arrive 30+ min early',             pts:'+5 pts' },
+  { label:'Season opener match',              pts:'20 pts' },
+  { label:'Consecutive match streak',         pts:'x1.5 bonus' },
+  { label:'Member referral (new member)',     pts:'25 pts' },
+];
+
+const RUNIN_MATCHES = [
+  { label:'Match 35', name:'Chelsea vs Tottenham', done:false },
+  { label:'Match 36', name:'Sunderland vs Chelsea', done:false },
+  { label:'Match 37', name:'TBC',                   done:false },
+  { label:'Match 38', name:'TBC',                   done:false },
+];
+
+function BalanceCard() {
+  const nextReward = REWARDS.find(r => r.pts > MY_PTS);
+  const ptsToNext = nextReward ? nextReward.pts - MY_PTS : 0;
+  return (
+    <div className="balance-card">
+      <div className="balance-card__label">Your Balance</div>
+      <div className="balance-card__num">{MY_PTS}</div>
+      <div className="balance-card__sub">points this season</div>
+      <div className="balance-card__divider"></div>
+      <div className="balance-card__stat">
+        <span className="balance-card__stat-label">Leaderboard rank</span>
+        <span className="balance-card__stat-val">#4 of 380</span>
+      </div>
+      <div className="balance-card__stat">
+        <span className="balance-card__stat-label">Points to #3</span>
+        <span className="balance-card__stat-val">+13 pts</span>
+      </div>
+      <div className="balance-card__stat">
+        <span className="balance-card__stat-label">Next reward</span>
+        <span className="balance-card__stat-val">{nextReward?.name} ({ptsToNext} pts away)</span>
+      </div>
+      <div className="balance-card__stat">
+        <span className="balance-card__stat-label">Run-in matches</span>
+        <span className="balance-card__stat-val">0 / 4 attended</span>
+      </div>
+      <div className="balance-card__divider"></div>
+      <div style={{background:'rgba(255,255,255,0.06)',borderRadius:6,overflow:'hidden',height:6,marginBottom:8}}>
+        <div style={{height:'100%',width:`${(MY_PTS/MAX_PTS)*100}%`,background:'var(--white)',borderRadius:6,transition:'width 1s ease'}}></div>
+      </div>
+      <div style={{display:'flex',justifyContent:'space-between',fontSize:11,color:'rgba(255,255,255,0.3)'}}>
+        <span>0</span><span>Next reward: {nextReward?.pts} pts</span>
+      </div>
+    </div>
+  );
+}
+
+function RewardLadder() {
+  return (
+    <div className="reward-card">
+      <div className="reward-card__title">Reward Ladder</div>
+      {REWARDS.map(r => {
+        const achieved = MY_PTS >= r.pts;
+        const progress = Math.min((MY_PTS / r.pts) * 100, 100);
+        return (
+          <div key={r.pts} className="reward-tier">
+            <div className="reward-tier__pts">{r.pts}</div>
+            <div style={{flex:1}}>
+              <div className="reward-tier__name">{r.name}</div>
+              <div style={{height:3,background:'var(--border)',borderRadius:2,marginTop:6,overflow:'hidden'}}>
+                <div style={{height:'100%',width:`${progress}%`,background:achieved?'#16a34a':'var(--blue)',borderRadius:2,transition:'width 0.8s ease'}}></div>
+              </div>
+            </div>
+            <span className={`reward-tier__status ${achieved ? 'status-ok' : 'badge-muted'}`}
+              style={achieved
+                ? {background:'#f0fdf4',color:'#15803d',border:'1px solid #86efac',fontSize:11,padding:'3px 9px',borderRadius:3,fontWeight:700,letterSpacing:'0.06em',textTransform:'uppercase'}
+                : {background:'var(--off-white)',color:'var(--muted)',border:'1px solid var(--border)',fontSize:11,padding:'3px 9px',borderRadius:3,fontWeight:600,letterSpacing:'0.06em',textTransform:'uppercase'}
+              }>
+              {achieved ? 'Earned' : `${r.pts - MY_PTS} pts`}
+            </span>
+          </div>
+        );
+      })}
+      <div style={{marginTop:16,background:'var(--off-white)',border:'1px solid var(--border)',borderRadius:8,padding:'12px 14px',fontSize:13,color:'var(--muted)',lineHeight:1.6}}>
+        <strong style={{color:'var(--text)'}}>Run-In Bonus:</strong> Attend all 4 final league matches to enter the Stamford Bridge ticket draw — regardless of your overall points ranking.
+      </div>
+    </div>
+  );
+}
+
+function RunInTracker() {
+  return (
+    <div className="runin-card">
+      <div style={{fontFamily:'Archivo',fontSize:16,fontWeight:800,color:'var(--white)'}}>Run-In Bonus Draw</div>
+      <div style={{fontSize:13,color:'rgba(255,255,255,0.5)',marginTop:4,lineHeight:1.6}}>
+        Attend all 4 final league matches to qualify for a Stamford Bridge ticket draw. Your current tally: <strong style={{color:'var(--white)'}}>0 / 4</strong>
+      </div>
+      <div className="runin-matches">
+        {RUNIN_MATCHES.map((m,i) => (
+          <div key={i} className={`runin-match${m.done?' runin-match--done':''}`}>
+            <div className="runin-match__label">{m.label}</div>
+            <div className="runin-match__name">{m.name}</div>
+            <div className="runin-match__check">{m.done ? 'Attended' : 'Not yet'}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Leaderboard() {
+  const [showAll, setShowAll] = useState(false);
+  const visible = showAll ? LEADERBOARD : LEADERBOARD.slice(0, 10);
+  return (
+    <div>
+      <div className="lb-header">
+        <div className="lb-title">Season Leaderboard</div>
+        <button
+          className="btn btn-outline btn-sm"
+          onClick={() => alert('Downloading standings PDF...')}
+        >
+          Download PDF
+        </button>
+      </div>
+
+      <div className="lb-table">
+        {visible.map(m => (
+          <div
+            key={m.rank}
+            className={`lb-row${m.you ? ' lb-row--you' : ''}${m.rank <= 3 ? ' lb-row--top' : ''}`}
+          >
+            <div className={`lb-rank${m.rank===1?' lb-rank--1':m.rank===2?' lb-rank--2':m.rank===3?' lb-rank--3':''}`}>
+              #{m.rank}
+            </div>
+            <div className={`lb-avatar${m.you ? ' lb-avatar--you' : ''}`}>{m.initials}</div>
+            <div className="lb-name">{m.you ? <strong>You</strong> : m.name}</div>
+            <div className="lb-pts-bar">
+              <div
+                className={`lb-pts-fill${m.rank===1?' lb-pts-fill--top':''}`}
+                style={{width:`${(m.pts / LEADERBOARD[0].pts) * 100}%`}}
+              ></div>
+            </div>
+            <div style={{textAlign:'right'}}>
+              <div className="lb-pts-val">{m.pts}</div>
+              <div className="lb-pts-label">pts</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {!showAll && LEADERBOARD.length > 10 && (
+        <button
+          className="btn btn-outline btn-md"
+          style={{width:'100%',marginTop:12}}
+          onClick={() => setShowAll(true)}
+        >
+          Show All {LEADERBOARD.length} Members
+        </button>
+      )}
+
+      <RunInTracker />
+    </div>
+  );
+}
+
+function PubPointsPage() {
+  return (
+    <div>
+      <Nav />
+
+      <PageHeader
+        label="2024–25 Season"
+        title="Attendance Prizes"
+        sub="Check in at The Brass Fish every match day to earn points, climb the leaderboard, and unlock rewards."
+      />
+
+      <div className="bg-off-white">
+        <div className="section">
+          <div className="points-layout">
+
+            {/* Left sidebar */}
+            <div>
+              <BalanceCard />
+              <div className="earn-card">
+                <div className="earn-card__title">How to Earn Points</div>
+                {EARN_METHODS.map(e => (
+                  <div key={e.label} className="earn-row">
+                    <span className="earn-row__label">{e.label}</span>
+                    <span className="earn-row__pts">{e.pts}</span>
+                  </div>
+                ))}
+                <div style={{marginTop:12,fontSize:12,color:'var(--muted)',lineHeight:1.6}}>
+                  Check in via QR code at The Brass Fish or ask the event admin to tap you in. Points credited within 24 hours. Questions? Email <a href="mailto:chelseafcvancouver@gmail.com" style={{color:'var(--blue)',fontWeight:600}}>chelseafcvancouver@gmail.com</a>
+                </div>
+              </div>
+              <RewardLadder />
+            </div>
+
+            {/* Right: leaderboard */}
+            <Leaderboard />
+
+          </div>
+        </div>
+      </div>
+
+      {/* CTA strip */}
+      <div style={{background:'var(--blue-dark)'}}>
+        <div style={{maxWidth:1200,margin:'0 auto',padding:'40px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:20,flexWrap:'wrap'}}>
+          <div>
+            <div style={{fontFamily:'Archivo',fontSize:20,fontWeight:800,color:'var(--white)'}}>Not yet a member?</div>
+            <div style={{fontSize:14,color:'rgba(255,255,255,0.5)',marginTop:4}}>Join CSCV for $30 CAD to start earning points and access Stamford Bridge ticket requests.</div>
+          </div>
+          <div style={{display:'flex',gap:12,flexShrink:0}}>
+            <a href="Memberships.html" className="btn btn-primary btn-md">Join CSCV</a>
+            <a href="Matches.html" className="btn btn-outline-white btn-md">Upcoming Matches</a>
+          </div>
+        </div>
+      </div>
+
+      <Footer />
+      <CookieBanner />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<PubPointsPage />);
+</script>
+</body>
+</html>
